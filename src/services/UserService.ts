@@ -12,13 +12,16 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EmailService } from './mail/EmailService';
+import { RandomService } from './random/RandomService';
+import { ConfirmDto } from 'src/dtos/ConfirmDto';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    private readonly repository: UserRepository,
+    private readonly randomService: RandomService,
+    // private readonly repository: UserRepository,
     private readonly jwtService: JwtService,
     private readonly emailService: EmailService,
   ) {}
@@ -49,12 +52,33 @@ export class UserService {
       throw new BadRequestException('This email already have being used');
     }
     try {
+      const code = this.randomService.generateRandomNumber();
+      data.code = code;
       data.password = this.encrypt(data.password);
-      await this.repository.create(data);
+      // await this.repository.create(data, code);
       await this.usersRepository.save(data);
-      this.emailService.sendWelcomeEmail(payload.email, payload.name);
+      this.emailService.sendWelcomeEmail(payload.email, payload.name, code);
     } catch (err) {
       throw new BadRequestException(err);
+    }
+  }
+
+  async confirmEmail(confirm: ConfirmDto): Promise<string> {
+    const userInfo = await this.usersRepository.findOne({
+      where: {
+        email: confirm.email,
+      },
+    });
+    if (!userInfo) {
+      throw new BadRequestException('User Not registered yet!');
+    } else {
+      if (userInfo.code === confirm.code) {
+        userInfo.isConfirm = true;
+        await this.usersRepository.save(userInfo);
+        return 'Email was confirmed';
+      } else {
+        return 'Code not true';
+      }
     }
   }
 
@@ -87,7 +111,11 @@ export class UserService {
 
     if (user && decryptedPassword === password) {
       const { password, ...result } = user;
-      return result as User;
+      if (user.isConfirm) {
+        return result as User;
+      } else {
+        throw new BadRequestException('Email was not confirmed yet!');
+      }
     }
 
     return null;

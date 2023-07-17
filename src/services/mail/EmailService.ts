@@ -17,12 +17,18 @@ export class EmailService {
     });
   }
 
-  async sendWelcomeEmail(to: string, name: string): Promise<void> {
+  async sendWelcomeEmail(
+    to: string,
+    name: string,
+    code: string,
+  ): Promise<void> {
     await this.transporter.sendMail({
       from: 'vienll@tech.est-rouge.com',
       to: to,
       subject: 'Welcome',
-      text: `Hi ${name}, Thank for registering. Hope you will enjoy with us!`,
+      text: `Hi ${name}, Thank for registering!
+      Please enter this code to confirm
+      ${code}`,
     });
   }
 
@@ -33,7 +39,7 @@ export class EmailService {
       subject: 'Billing',
       text: `Hi ${body.name}, this is your rent car billing information. Please take a look.
       \n\n
-      `
+      `,
     });
   }
 }

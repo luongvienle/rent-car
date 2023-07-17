@@ -26,4 +26,6 @@ export class UserDto extends BaseDto {
   @ApiProperty()
   @IsEmail()
   email: string;
+
+  code: string | null;
 }

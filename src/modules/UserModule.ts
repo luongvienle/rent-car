@@ -9,6 +9,7 @@ import { LocalStrategy } from 'src/shared/LocalStrategy';
 import { User } from 'src/models/User';
 import { EmailService } from 'src/services/mail/EmailService';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { RandomService } from 'src/services/random/RandomService';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     LocalStrategy,
     JwtStrategy,
     EmailService,
+    RandomService,
   ],
 })
 export class UserModule {}

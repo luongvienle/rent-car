@@ -2,10 +2,12 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column()
+  @Column({
+    default: 0,
+  })
   name: string;
 
   @Column()
@@ -14,6 +16,13 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   isConfirm?: boolean;
+
+  @Column({
+    nullable: true,
+  })
+  code: string;
 }
