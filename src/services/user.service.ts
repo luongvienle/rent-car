@@ -1,16 +1,16 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { UserDto } from 'src/dtos/UserDto';
+import { UserDto } from 'src/dtos/user.dto';
 import * as cryptojs from 'crypto-js';
-import { User } from 'src/models/User';
+import { User } from 'src/entity/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { EmailService } from './mail/EmailService';
-import { RandomService } from './random/RandomService';
-import { ConfirmDto } from 'src/dtos/ConfirmDto';
+import { EmailService } from './mail/email.service';
+import { RandomService } from './random/random.service';
+import { ConfirmDto } from 'src/dtos/confirm.dto';
 import { ConfigService } from '@nestjs/config';
-import { JwtToken } from 'src/models/JwtToken';
-import { TokenDto } from 'src/dtos/TokenDto';
+import { JwtToken } from 'src/entity/jwt.token.entity';
+import { TokenDto } from 'src/dtos/token.dto';
 
 @Injectable()
 export class UserService {

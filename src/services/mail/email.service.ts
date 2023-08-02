@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
-import { RentCarDto } from 'src/dtos/RentCarDto';
+import { RentCarDto } from 'src/dtos/rent.car.dto';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()

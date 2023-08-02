@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Observable } from 'rxjs';
-import { JwtToken } from 'src/models/JwtToken';
+import { JwtToken } from 'src/entity/jwt.token.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()

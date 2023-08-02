@@ -7,7 +7,7 @@ import {
   IsNumber,
   IsString,
 } from 'class-validator';
-import { BaseDto } from './BaseDto';
+import { BaseDto } from './base.dto';
 
 export class RentCarDto extends BaseDto {
   @IsNotEmpty({
@@ -26,10 +26,12 @@ export class RentCarDto extends BaseDto {
   @Expose()
   name: string;
 
+  @Expose()
+  email: string;
+
   @IsNotEmpty({
     message: () => 'Phone number is mandatory',
   })
-  @IsMobilePhone('vi-VN')
   @ApiProperty()
   @Expose()
   phone: string;

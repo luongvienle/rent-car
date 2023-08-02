@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { BaseDto } from './BaseDto';
+import { BaseDto } from './base.dto';
 
 export class CarDto extends BaseDto {
   @IsString()

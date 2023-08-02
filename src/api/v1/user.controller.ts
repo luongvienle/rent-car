@@ -6,14 +6,13 @@ import {
   UseGuards,
   Headers,
 } from '@nestjs/common';
-import { UserDto } from 'src/dtos/UserDto';
+import { UserDto } from 'src/dtos/user.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { UserService } from 'src/services/UserService';
-import { LoginDto } from 'src/dtos/LoginDto';
+import { UserService } from 'src/services/user.service';
+import { LoginDto } from 'src/dtos/login.dto';
 import { LocalAuthGuard } from 'src/shared/LocalAuthGuard';
-import { ConfirmDto } from 'src/dtos/ConfirmDto';
+import { ConfirmDto } from 'src/dtos/confirm.dto';
 import { JwtAuthGuard } from 'src/shared/JwtAuthGuard';
-import { TokenExistsGuard } from 'src/guard/token-exists.guard';
 @Controller('User')
 @ApiTags('User')
 export class UserController {

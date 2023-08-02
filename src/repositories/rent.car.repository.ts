@@ -1,6 +1,6 @@
 import { Firestore } from '@google-cloud/firestore';
-import { BillingInfo } from 'src/models/BillingInfo';
-import { Car } from 'src/models/Car';
+import { BillingInfo } from 'src/entity/billing.info.entity';
+import { Car } from 'src/entity/car.entity';
 import { FirestoreInstance } from './config/FirestoreInstance';
 
 export class RentCarRepository {

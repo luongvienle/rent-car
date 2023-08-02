@@ -1,13 +1,13 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CarDto } from 'src/dtos/CarDto';
-import { RentCarDto } from 'src/dtos/RentCarDto';
-import { BillingInfo } from 'src/models/BillingInfo';
-import { Car } from 'src/models/Car';
-import { RentCarRepository } from 'src/repositories/RentCarRepository';
+import { CarDto } from 'src/dtos/car.dto';
+import { RentCarDto } from 'src/dtos/rent.car.dto';
+import { BillingInfo } from 'src/entity/billing.info.entity';
+import { Car } from 'src/entity/car.entity';
+import { RentCarRepository } from 'src/repositories/rent.car.repository';
 import { decodeAuth } from 'src/utils/DecodeAuth';
 import { DataSource, Repository } from 'typeorm';
-import { EmailService } from './mail/EmailService';
+import { EmailService } from './mail/email.service';
 @Injectable()
 export class RentCarService {
   constructor(
@@ -38,51 +38,17 @@ export class RentCarService {
   }
 
   async rentCar(rentCarDto: RentCarDto, auth: string): Promise<String> {
-    const user = decodeAuth(auth);
-    // const rentedCar = await this.repository.checkIfUserRented(user);
+    const email = decodeAuth(auth);
+    rentCarDto.email = email;
     const rentedCar = await this.carRepository.findOne({
       where: {
-        rentBy: user,
+        rentBy: email,
       },
     });
 
     if (rentedCar) {
       throw new BadRequestException('You rented another car');
     }
-
-    const {
-      name,
-      phone,
-      address,
-      city,
-      subTotal,
-      saleId,
-      tax,
-      paymentId,
-      pickUpLocation,
-      dropOffLocation,
-      pickUpDate,
-      dropOffDate,
-    } = rentCarDto;
-    const billingList = await this.repository.getListBilling();
-    const data: BillingInfo = {
-      id: !billingList ? 1 : billingList.length + 1,
-      name,
-      phone,
-      address,
-      city,
-      subTotal,
-      saleId,
-      tax,
-      paymentId,
-      pickUpLocation,
-      dropOffLocation,
-      pickUpDate,
-      dropOffDate,
-    };
-    // const existenCar = await this.repository.getCarByCode(
-    //   rentCarDto.registerCode,
-    // );
 
     const existenCar = await this.carRepository.findOne({
       where: {
@@ -98,22 +64,22 @@ export class RentCarService {
     }
 
     existenCar.available = false;
-    existenCar.rentBy = user;
+    existenCar.rentBy = email;
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
       // Perform your transactional operations
-      await this.billingRepository.save(data);
+      await this.billingRepository.save(rentCarDto);
 
       // Save the rented car
       // await this.repository.rentOrGiveBackCar(existenCar);
       await this.carRepository.save(existenCar);
       await this.emailService.sendBillingEmail(
-        user,
+        email,
         RentCarDto.plainToClass(rentCarDto),
       );
-      this.loggerSevice.log(data);
+      this.loggerSevice.log(rentCarDto);
       await queryRunner.commitTransaction();
     } catch (err) {
       // Rollback the transaction if an error occurs
@@ -158,7 +124,11 @@ export class RentCarService {
   }
 
   async getRentDetail(rentId: number): Promise<BillingInfo> {
-    const billing = await this.repository.getRentedDetail(rentId);
+    const billing = await this.billingRepository.findOne({
+      where: {
+        id: rentId,
+      },
+    });
     this.loggerSevice.debug(`rent detail id: ${rentId}`);
     if (!billing) {
       throw new BadRequestException('Order not found');
@@ -167,8 +137,21 @@ export class RentCarService {
     }
   }
 
+  async getUserRentDetail(auth: string): Promise<BillingInfo[]> {
+    const email = decodeAuth(auth);
+    const billing = await this.billingRepository.find({
+      where: {
+        email: email,
+      },
+    });
+    if (!billing) {
+      throw new BadRequestException('Not rent yet!');
+    } else {
+      return billing;
+    }
+  }
+
   async getCarDetail(registerCode: number): Promise<Car> {
-    // const car = await this.repository.getCarDetail(id);
     const car = await this.carRepository.findOne({
       where: {
         registerCode: registerCode,

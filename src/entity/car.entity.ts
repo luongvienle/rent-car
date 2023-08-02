@@ -1,7 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Car {
+  @Index()
+  @PrimaryGeneratedColumn()
+  registerCode: number;
+
   @Column()
   name: string;
 
@@ -26,9 +30,7 @@ export class Car {
   @Column()
   description: string | null;
 
-  @PrimaryGeneratedColumn()
-  registerCode: number;
-
+  @Index()
   @Column({
     nullable: true,
   })

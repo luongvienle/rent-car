@@ -1,5 +1,5 @@
 import { Firestore } from '@google-cloud/firestore';
-import { User } from 'src/models/User';
+import { User } from 'src/entity/user.entity';
 import { FirestoreInstance } from './config/FirestoreInstance';
 export class UserRepository {
   private readonly nameCollection: string = 'user';

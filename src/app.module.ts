@@ -4,14 +4,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ResponseInterceptor } from './interceptor/transform.interceptor';
-import { RequestLoggingMiddleware } from './middleware/LoggerMiddleware';
-import { BillingInfo } from './models/BillingInfo';
-import { Car } from './models/Car';
-import { User } from './models/User';
-import { RentModule } from './modules/RentModule';
-import { UserModule } from './modules/UserModule';
+import { BillingInfo } from './entity/billing.info.entity';
+import { Car } from './entity/car.entity';
+import { User } from './entity/user.entity';
+import { RentModule } from './modules/rent.car.module';
+import { UserModule } from './modules/user.module';
 import { ConfigModule } from '@nestjs/config';
-import { JwtToken } from './models/JwtToken';
+import { JwtToken } from './entity/jwt.token.entity';
+import { RequestLoggingMiddleware } from './middleware/logger.middleware';
+import { Payment } from './entity/payment.entity';
 
 @Module({
   imports: [
@@ -27,9 +28,8 @@ import { JwtToken } from './models/JwtToken';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User, Car, BillingInfo, JwtToken],
+      entities: [User, Car, BillingInfo, JwtToken, Payment],
       synchronize: true,
-      // migrations: ['dist/src/db/migrations/*.ts'],
     }),
   ],
   controllers: [AppController],

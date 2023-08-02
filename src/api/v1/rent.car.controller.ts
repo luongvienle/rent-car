@@ -14,13 +14,14 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { CarDto } from 'src/dtos/CarDto';
-import { RentCarDto } from 'src/dtos/RentCarDto';
+import { CarDto } from 'src/dtos/car.dto';
+import { RentCarDto } from 'src/dtos/rent.car.dto';
 import { TokenExistsGuard } from 'src/guard/token-exists.guard';
-import { BillingInfo } from 'src/models/BillingInfo';
-import { Car } from 'src/models/Car';
-import { RentCarService } from 'src/services/RentCarService';
+import { BillingInfo } from 'src/entity/billing.info.entity';
+import { Car } from 'src/entity/car.entity';
+import { RentCarService } from 'src/services/rent.car.service';
 import { JwtAuthGuard } from 'src/shared/JwtAuthGuard';
+import { RoleAmindGuard } from 'src/guard/role.guard';
 
 @Controller('rent-car')
 @ApiTags('Rent Car')
@@ -40,6 +41,7 @@ export class RentCarController {
 
   @UseGuards(JwtAuthGuard)
   @UseGuards(TokenExistsGuard)
+  @UseGuards(RoleAmindGuard)
   @Get('rent-detail/:id')
   @ApiOperation({
     summary: 'Rent car detail',
@@ -48,6 +50,17 @@ export class RentCarController {
   @ApiBearerAuth()
   async rentDetail(@Param('id') id): Promise<BillingInfo> {
     return this.service.getRentDetail(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(TokenExistsGuard)
+  @Get('rent-detail/')
+  @ApiOperation({
+    summary: 'Rent car detail',
+  })
+  @ApiBearerAuth()
+  async rentUserDetail(@Headers() headers): Promise<BillingInfo[]> {
+    return this.service.getUserRentDetail(headers.authorization);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -64,6 +77,7 @@ export class RentCarController {
 
   @UseGuards(JwtAuthGuard)
   @UseGuards(TokenExistsGuard)
+  @UseGuards(RoleAmindGuard)
   @Post('register-new-car')
   @ApiOperation({
     summary: 'Register a car',

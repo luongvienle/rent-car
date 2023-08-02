@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm';
 
 @Entity()
 export class User {
+  @Index()
   @PrimaryGeneratedColumn('increment')
   id: number;
 
@@ -25,4 +26,9 @@ export class User {
     nullable: true,
   })
   code: string;
+
+  @Column({
+    nullable: true,
+  })
+  role: string;
 }

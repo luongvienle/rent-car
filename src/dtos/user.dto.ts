@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { BaseDto } from './BaseDto';
+import { BaseDto } from './base.dto';
 import { Expose } from 'class-transformer';
 export class UserDto extends BaseDto {
   @IsString()
