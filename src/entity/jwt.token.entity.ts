@@ -1,10 +1,8 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index } from 'typeorm';
+import { BaseEntity } from './base.entity';
 
 @Entity()
-export class JwtToken {
-  @PrimaryGeneratedColumn('increment')
-  id: number;
-
+export class JwtToken extends BaseEntity {
   @Index()
   @Column()
   token: string;

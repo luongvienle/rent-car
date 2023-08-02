@@ -20,7 +20,7 @@ export class UserController {
   @Post('create-auth')
   @ApiOperation({ summary: 'create an user to authentic' })
   async create(@Body() payload: UserDto): Promise<string> {
-    return this.service.create(payload);
+    return this.service.createUser(payload);
   }
 
   @Post('code')

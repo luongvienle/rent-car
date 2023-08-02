@@ -3,18 +3,9 @@ import {
   ExecutionContext,
   HttpStatus,
   Injectable,
-  Logger,
-  LoggerService,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Observable } from 'rxjs';
-import {
-  CommonError,
-  ErrorCode,
-  ErrorMessage,
-  TitleCode,
-} from 'src/common/common.error';
+import { CommonError, ErrorMessage, TitleCode } from 'src/common/common.error';
 import { JwtToken } from 'src/entity/jwt.token.entity';
 import { User } from 'src/entity/user.entity';
 import { decodeAuth } from 'src/utils/DecodeAuth';
@@ -35,7 +26,7 @@ export class RoleAmindGuard implements CanActivate {
         email: email,
       },
     });
-    if (user.role != 'admin') {
+    if (user.roleId != 1) {
       throw new CommonError(
         ErrorMessage.UNAUTHORIZED,
         HttpStatus.UNAUTHORIZED,

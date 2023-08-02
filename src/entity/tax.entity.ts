@@ -2,7 +2,7 @@ import { Column, Entity } from 'typeorm';
 import { BaseEntity } from './base.entity';
 
 @Entity()
-export class Payment extends BaseEntity {
+export class Tax extends BaseEntity {
   @Column()
-  paymentName: string;
+  percent: string;
 }

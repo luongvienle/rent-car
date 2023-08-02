@@ -18,7 +18,7 @@ export class CarDto extends BaseDto {
     message: () => 'Type property is mandatory',
   })
   @ApiProperty()
-  type: string;
+  typeId: number;
 
   @IsNumber()
   @Expose()
@@ -34,7 +34,7 @@ export class CarDto extends BaseDto {
     message: () => 'capacity property is mandatory',
   })
   @ApiProperty()
-  capacity: number;
+  capacityId: number;
 
   @IsNumber()
   @Expose()

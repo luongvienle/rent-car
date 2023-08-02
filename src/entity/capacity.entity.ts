@@ -1,10 +1,8 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity } from 'typeorm';
+import { BaseEntity } from './base.entity';
 
 @Entity()
-export class Capacity {
-  @PrimaryColumn()
-  id: number;
-
+export class Capacity extends BaseEntity {
   @Column()
   capacity: number;
 

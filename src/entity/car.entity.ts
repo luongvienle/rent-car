@@ -1,11 +1,8 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index } from 'typeorm';
+import { BaseEntity } from './base.entity';
 
 @Entity()
-export class Car {
-  @Index()
-  @PrimaryGeneratedColumn()
-  registerCode: number;
-
+export class Car extends BaseEntity {
   @Column()
   name: string;
 
@@ -13,13 +10,13 @@ export class Car {
   available: boolean;
 
   @Column()
-  type: string;
+  typeId: number;
 
   @Column()
   steeringId: number;
 
   @Column()
-  capacity: number;
+  capacityId: number;
 
   @Column()
   rentPrice: number;
@@ -35,4 +32,7 @@ export class Car {
     nullable: true,
   })
   rentBy: string;
+
+  @Column('simple-array')
+  images: string[];
 }

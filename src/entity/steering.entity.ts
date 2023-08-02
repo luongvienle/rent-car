@@ -1,10 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity } from 'typeorm';
+import { BaseEntity } from './base.entity';
 
 @Entity()
-export class Steering {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Steering extends BaseEntity {
   @Column()
   name: string;
 

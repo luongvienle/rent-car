@@ -35,7 +35,7 @@ export class RentCarController {
     summary: 'List all cars',
   })
   @ApiBearerAuth()
-  async listAll(): Promise<Car[]> {
+  async listAll(): Promise<CarDto[]> {
     return this.service.getAllCars();
   }
 

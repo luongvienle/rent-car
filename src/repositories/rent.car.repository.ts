@@ -89,9 +89,7 @@ export class RentCarRepository {
   async rentOrGiveBackCar(car: Car): Promise<any> {
     const docRef = await this.firebaseDb.collection(this.nameCollection);
 
-    docRef
-      .doc(car.registerCode.toString())
-      .update(JSON.parse(JSON.stringify(car)));
+    docRef.doc(car.id.toString()).update(JSON.parse(JSON.stringify(car)));
   }
 
   async createBillingRentCar(billing: BillingInfo): Promise<any> {
@@ -102,7 +100,7 @@ export class RentCarRepository {
   async createCar(payload: Car): Promise<void> {
     await this.firebaseDb
       .collection(this.nameCollection)
-      .doc(payload.registerCode.toString())
+      .doc(payload.id.toString())
       .set(payload);
   }
 }

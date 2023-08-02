@@ -13,6 +13,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtToken } from './entity/jwt.token.entity';
 import { RequestLoggingMiddleware } from './middleware/logger.middleware';
 import { Payment } from './entity/payment.entity';
+import { Role } from './entity/role.entity';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { Payment } from './entity/payment.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User, Car, BillingInfo, JwtToken, Payment],
+      entities: ['dist/**/*.entity.js'],
       synchronize: true,
     }),
   ],

@@ -40,7 +40,7 @@ export class UserService {
     }).toString(cryptojs.enc.Utf8);
   }
 
-  async createUser(payload: UserDto): Promise<void> {
+  async createUser(payload: UserDto): Promise<string> {
     const data = payload;
     const existentUser = await this.usersRepository.findOne({
       where: {
@@ -60,6 +60,7 @@ export class UserService {
     } catch (err) {
       throw new BadRequestException(err);
     }
+    return 'Create User Successful';
   }
 
   async confirmEmail(confirm: ConfirmDto): Promise<string> {

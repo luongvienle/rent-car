@@ -23,9 +23,11 @@ export class RentCarService {
     private dataSource: DataSource,
   ) {}
 
-  async getAllCars(): Promise<Car[]> {
+  async getAllCars(): Promise<CarDto[]> {
     const result = await this.carRepository.find();
-    return result;
+    return result.map((entity) => {
+      return CarDto.plainToClass(entity);
+    });
   }
 
   async getAvailableCars(): Promise<Car[]> {
@@ -52,7 +54,7 @@ export class RentCarService {
 
     const existenCar = await this.carRepository.findOne({
       where: {
-        registerCode: rentCarDto.registerCode,
+        id: rentCarDto.registerCode,
       },
     });
     if (!existenCar) {
@@ -154,7 +156,7 @@ export class RentCarService {
   async getCarDetail(registerCode: number): Promise<Car> {
     const car = await this.carRepository.findOne({
       where: {
-        registerCode: registerCode,
+        id: registerCode,
       },
     });
     this.loggerSevice.debug(`car detail id: ${registerCode}`);
@@ -166,30 +168,8 @@ export class RentCarService {
   }
 
   async createCar(payload: CarDto): Promise<CarDto> {
-    const {
-      name,
-      type,
-      steeringId,
-      capacity,
-      rentPrice,
-      gasoline,
-      description,
-    } = payload;
     payload.createdDate = new Date();
     payload.updatedDate = new Date();
-    const carList = await this.carRepository.find();
-    const data: Car = {
-      name,
-      available: true,
-      type,
-      steeringId,
-      capacity,
-      rentPrice,
-      gasoline,
-      description,
-      registerCode: !carList ? 1 : carList.length + 1,
-      rentBy: null,
-    };
     // await this.repository.createCar(data);
 
     const queryRunner = this.dataSource.createQueryRunner();
@@ -197,7 +177,7 @@ export class RentCarService {
     await queryRunner.startTransaction();
     try {
       // Perform your transactional operations
-      await this.carRepository.save(data);
+      await this.carRepository.save(payload);
       await queryRunner.commitTransaction();
     } catch (err) {
       // Rollback the transaction if an error occurs

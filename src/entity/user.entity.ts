@@ -1,11 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm';
+import { Entity, Column } from 'typeorm';
+import { BaseEntity } from './base.entity';
 
 @Entity()
-export class User {
-  @Index()
-  @PrimaryGeneratedColumn('increment')
-  id: number;
-
+export class User extends BaseEntity {
   @Column({
     default: 0,
   })
@@ -30,5 +27,5 @@ export class User {
   @Column({
     nullable: true,
   })
-  role: string;
+  roleId: number;
 }
