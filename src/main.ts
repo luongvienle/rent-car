@@ -2,8 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import * as dotenv from 'dotenv';
+import { CustomExceptionFilter } from './filter/CustomExceptionFilter';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
+  dotenv.config();
   const app = await NestFactory.create(AppModule, {});
   app.setGlobalPrefix('api/v1');
 
@@ -21,7 +25,9 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
-
-  await app.listen(3333);
+  app.useGlobalFilters(new CustomExceptionFilter());
+  const configService = app.get(ConfigService);
+  const port = configService.get('PORT');
+  await app.listen(port);
 }
 bootstrap();

@@ -16,21 +16,19 @@ import {
 } from '@nestjs/swagger';
 import { CarDto } from 'src/dtos/CarDto';
 import { RentCarDto } from 'src/dtos/RentCarDto';
+import { TokenExistsGuard } from 'src/guard/token-exists.guard';
 import { BillingInfo } from 'src/models/BillingInfo';
 import { Car } from 'src/models/Car';
-import { EmailService } from 'src/services/mail/EmailService';
 import { RentCarService } from 'src/services/RentCarService';
 import { JwtAuthGuard } from 'src/shared/JwtAuthGuard';
 
 @Controller('rent-car')
 @ApiTags('Rent Car')
 export class RentCarController {
-  constructor(
-    private readonly service: RentCarService,
-    private readonly emailService: EmailService,
-  ) {}
+  constructor(private readonly service: RentCarService) {}
 
   @UseGuards(JwtAuthGuard)
+  @UseGuards(TokenExistsGuard)
   @Get('all')
   @ApiOperation({
     summary: 'List all cars',
@@ -41,6 +39,7 @@ export class RentCarController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @UseGuards(TokenExistsGuard)
   @Get('rent-detail/:id')
   @ApiOperation({
     summary: 'Rent car detail',
@@ -52,6 +51,7 @@ export class RentCarController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @UseGuards(TokenExistsGuard)
   @Get('car-detail/:id')
   @ApiOperation({
     summary: 'Car detail information',
@@ -63,6 +63,7 @@ export class RentCarController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @UseGuards(TokenExistsGuard)
   @Post('register-new-car')
   @ApiOperation({
     summary: 'Register a car',
@@ -73,6 +74,7 @@ export class RentCarController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @UseGuards(TokenExistsGuard)
   @Patch('rent-car')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Rent a car' })
@@ -84,6 +86,7 @@ export class RentCarController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @UseGuards(TokenExistsGuard)
   @Patch('give-back')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Give back your rented car' })
@@ -92,6 +95,7 @@ export class RentCarController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @UseGuards(TokenExistsGuard)
   @ApiBearerAuth()
   @Get('available')
   @ApiOperation({

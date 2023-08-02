@@ -1,9 +1,8 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CustomExceptionFilter } from './fiter/CustomExceptionFilter';
 import { ResponseInterceptor } from './interceptor/transform.interceptor';
 import { RequestLoggingMiddleware } from './middleware/LoggerMiddleware';
 import { BillingInfo } from './models/BillingInfo';
@@ -11,20 +10,26 @@ import { Car } from './models/Car';
 import { User } from './models/User';
 import { RentModule } from './modules/RentModule';
 import { UserModule } from './modules/UserModule';
+import { ConfigModule } from '@nestjs/config';
+import { JwtToken } from './models/JwtToken';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     UserModule,
     RentModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: process.env.DB_HOST,
       port: 3306,
-      username: 'root',
-      password: 'root1234',
-      database: 'rent_car',
-      entities: [User, Car, BillingInfo],
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+      entities: [User, Car, BillingInfo, JwtToken],
       synchronize: true,
+      // migrations: ['dist/src/db/migrations/*.ts'],
     }),
   ],
   controllers: [AppController],
@@ -34,10 +39,6 @@ import { UserModule } from './modules/UserModule';
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,
     },
-    // {
-    //   provide: APP_FILTER,
-    //   useClass: CustomExceptionFilter,
-    // },
   ],
 })
 export class AppModule implements NestModule {

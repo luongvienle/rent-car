@@ -1,18 +1,19 @@
 import {
   Body,
   Controller,
-  Get,
   Post,
   Request,
   UseGuards,
+  Headers,
 } from '@nestjs/common';
 import { UserDto } from 'src/dtos/UserDto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from 'src/services/UserService';
 import { LoginDto } from 'src/dtos/LoginDto';
 import { LocalAuthGuard } from 'src/shared/LocalAuthGuard';
-import { EmailService } from 'src/services/mail/EmailService';
 import { ConfirmDto } from 'src/dtos/ConfirmDto';
+import { JwtAuthGuard } from 'src/shared/JwtAuthGuard';
+import { TokenExistsGuard } from 'src/guard/token-exists.guard';
 @Controller('User')
 @ApiTags('User')
 export class UserController {
@@ -41,5 +42,20 @@ export class UserController {
     @Body() _payload: LoginDto,
   ): Promise<Object> {
     return this.service.login(req.user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Logout function',
+  })
+  async logout(@Headers() headers): Promise<String> {
+    const token = headers.authorization;
+    if (token) {
+      const tokenWithoutBearer = token.replace('Bearer ', '');
+      return this.service.logout(tokenWithoutBearer);
+    }
+    return this.service.logout(token);
   }
 }

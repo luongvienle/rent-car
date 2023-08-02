@@ -6,7 +6,7 @@ import { BillingInfo } from 'src/models/BillingInfo';
 import { Car } from 'src/models/Car';
 import { RentCarRepository } from 'src/repositories/RentCarRepository';
 import { decodeAuth } from 'src/utils/DecodeAuth';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { EmailService } from './mail/EmailService';
 @Injectable()
 export class RentCarService {
@@ -20,6 +20,7 @@ export class RentCarService {
     private readonly repository: RentCarRepository,
     private readonly emailService: EmailService,
     private readonly loggerSevice: Logger,
+    private dataSource: DataSource,
   ) {}
 
   async getAllCars(): Promise<Car[]> {
@@ -96,12 +97,13 @@ export class RentCarService {
       throw new BadRequestException('This car was not available');
     }
 
+    existenCar.available = false;
+    existenCar.rentBy = user;
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
-      existenCar.available = false;
-      existenCar.rentBy = user;
-
-      // Save the bill
-      // await this.repository.createBillingRentCar(data);
+      // Perform your transactional operations
       await this.billingRepository.save(data);
 
       // Save the rented car
@@ -112,8 +114,14 @@ export class RentCarService {
         RentCarDto.plainToClass(rentCarDto),
       );
       this.loggerSevice.log(data);
+      await queryRunner.commitTransaction();
     } catch (err) {
-      throw new BadRequestException(err);
+      // Rollback the transaction if an error occurs
+      await queryRunner.rollbackTransaction();
+      throw new Error(err.message);
+    } finally {
+      // Release the query runner
+      await queryRunner.release();
     }
     return 'Rent car successfully!';
   }
@@ -129,14 +137,22 @@ export class RentCarService {
     if (!rentedCar) {
       throw new BadRequestException('You dont have a car rented');
     }
-
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
+      // Perform your transactional operations
       rentedCar.available = true;
       rentedCar.rentBy = null;
       await this.carRepository.save(rentedCar);
-      // await this.repository.rentOrGiveBackCar(rentedCar);
+      await queryRunner.commitTransaction();
     } catch (err) {
-      throw new BadRequestException(err);
+      // Rollback the transaction if an error occurs
+      await queryRunner.rollbackTransaction();
+      throw new Error(err.message);
+    } finally {
+      // Release the query runner
+      await queryRunner.release();
     }
     return 'Give back the car successfully!';
   }
@@ -192,7 +208,22 @@ export class RentCarService {
       rentBy: null,
     };
     // await this.repository.createCar(data);
-    await this.carRepository.save(data);
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      // Perform your transactional operations
+      await this.carRepository.save(data);
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await queryRunner.rollbackTransaction();
+      throw new Error(err.message);
+    } finally {
+      // Release the query runner
+      await queryRunner.release();
+    }
     return CarDto.plainToClass(payload);
   }
 }
