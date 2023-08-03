@@ -1,5 +1,14 @@
+import { IsInt } from 'class-validator';
 import { Column, Entity, Index } from 'typeorm';
 import { BaseEntity } from './base.entity';
+
+export class PaginationDto {
+  @IsInt()
+  page: number;
+
+  @IsInt()
+  offset: number;
+}
 
 @Entity()
 export class Car extends BaseEntity {

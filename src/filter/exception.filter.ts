@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CommonError } from 'src/common/common.error';
-import { json } from 'stream/consumers';
 
 @Catch(HttpException)
 export class CustomExceptionFilter implements ExceptionFilter {

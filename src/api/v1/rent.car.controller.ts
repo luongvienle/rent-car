@@ -7,11 +7,13 @@ import {
   Headers,
   UseGuards,
   Param,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { CarDto } from 'src/dtos/car.dto';
@@ -22,6 +24,7 @@ import { Car } from 'src/entity/car.entity';
 import { RentCarService } from 'src/services/rent.car.service';
 import { JwtAuthGuard } from 'src/shared/JwtAuthGuard';
 import { RoleAmindGuard } from 'src/guard/role.guard';
+import { Pagination } from '../../utils/interfaces';
 
 @Controller('car')
 @ApiTags('Rent Car')
@@ -34,9 +37,20 @@ export class RentCarController {
   @ApiOperation({
     summary: 'List all cars',
   })
+  @ApiQuery({
+    name: 'page',
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'offset',
+    type: Number,
+  })
   @ApiBearerAuth()
-  async listAll(): Promise<CarDto[]> {
-    return this.service.getAllCars();
+  async listAll(
+    @Query('page') page: number,
+    @Query('offset') offset: number,
+  ): Promise<Pagination<CarDto[]>> {
+    return this.service.getAllCars({ page, offset });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -46,7 +60,6 @@ export class RentCarController {
   @ApiOperation({
     summary: 'Rent car detail',
   })
-  @ApiParam({ name: 'id', required: true })
   @ApiBearerAuth()
   async rentDetail(@Param('id') id): Promise<BillingInfo> {
     return this.service.getRentDetail(id);

@@ -3,11 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CarDto } from 'src/dtos/car.dto';
 import { RentCarDto } from 'src/dtos/rent.car.dto';
 import { BillingInfo } from 'src/entity/billing.info.entity';
-import { Car } from 'src/entity/car.entity';
+import { Car, PaginationDto } from 'src/entity/car.entity';
 import { RentCarRepository } from 'src/repositories/rent.car.repository';
 import { decodeAuth } from 'src/utils/DecodeAuth';
 import { DataSource, Repository } from 'typeorm';
 import { EmailService } from './mail/email.service';
+import { Pagination } from '../utils/interfaces';
 @Injectable()
 export class RentCarService {
   constructor(
@@ -23,11 +24,23 @@ export class RentCarService {
     private dataSource: DataSource,
   ) {}
 
-  async getAllCars(): Promise<CarDto[]> {
-    const result = await this.carRepository.find();
-    return result.map((entity) => {
-      return CarDto.plainToClass(entity);
+  async getAllCars({
+    page,
+    offset,
+  }: PaginationDto): Promise<Pagination<CarDto[]>> {
+    this.loggerSevice.log(page + ' ');
+    const [result, total] = await this.carRepository.findAndCount({
+      take: offset,
+      skip: offset * (page - 1),
     });
+
+    return {
+      total: Math.ceil(total / offset) - 1,
+      page: +page,
+      data: result.map((entity) => {
+        return CarDto.plainToClass(entity);
+      }),
+    };
   }
 
   async getAvailableCars(): Promise<Car[]> {

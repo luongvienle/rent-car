@@ -29,7 +29,7 @@
     "@nestjs/mapped-types": "^2.0.2",
     "@nestjs/passport": "^10.0.0",
     "@nestjs/platform-express": "^10.0.5",
-    "@nestjs/swagger": "^7.1.1",
+    "@nestjs/swagger": "^7.1.6",
     "@nestjs/typeorm": "^10.0.0",
     "bull": "^4.10.4",
     "class-transformer": "^0.5.1",
