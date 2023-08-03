@@ -89,7 +89,7 @@ export class RentCarController {
 
   @UseGuards(JwtAuthGuard)
   @UseGuards(TokenExistsGuard)
-  @Patch('order')
+  @Post('order')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Rent a car' })
   async rentCar(
