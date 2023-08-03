@@ -13,11 +13,11 @@ import { LoginDto } from 'src/dtos/login.dto';
 import { LocalAuthGuard } from 'src/shared/LocalAuthGuard';
 import { ConfirmDto } from 'src/dtos/confirm.dto';
 import { JwtAuthGuard } from 'src/shared/JwtAuthGuard';
-@Controller('User')
-@ApiTags('User')
+@Controller('auth')
+@ApiTags('auth')
 export class UserController {
   constructor(private readonly service: UserService) {}
-  @Post('create-auth')
+  @Post('gegister')
   @ApiOperation({ summary: 'create an user to authentic' })
   async create(@Body() payload: UserDto): Promise<string> {
     return this.service.createUser(payload);

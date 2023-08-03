@@ -12,45 +12,35 @@ export class CarDto extends BaseDto {
   @Expose()
   name: string;
 
-  @IsString()
+  @IsNumber()
   @Expose()
-  @IsNotEmpty({
-    message: () => 'Type property is mandatory',
-  })
   @ApiProperty()
   typeId: number;
 
+  available: boolean;
+
   @IsNumber()
   @Expose()
-  @IsNotEmpty({
-    message: () => 'steering property is mandatory',
-  })
   @ApiProperty()
   steeringId: number;
 
   @IsNumber()
   @Expose()
-  @IsNotEmpty({
-    message: () => 'capacity property is mandatory',
-  })
   @ApiProperty()
   capacityId: number;
 
   @IsNumber()
   @Expose()
-  @IsNotEmpty({
-    message: () => 'rentPrice property is mandatory',
-  })
   @ApiProperty()
-  rentPrice: number;
+  price: number;
 
   @IsNumber()
   @Expose()
-  @IsNotEmpty({
-    message: () => 'gasoline property is mandatory',
-  })
   @ApiProperty()
   gasoline: number;
+
+  @ApiProperty()
+  images: string[] | null;
 
   @IsString()
   @Expose()

@@ -16,7 +16,7 @@ export class RentCarDto extends BaseDto {
   @IsNumber()
   @ApiProperty()
   @Expose()
-  registerCode: number;
+  id: number;
 
   @IsNotEmpty({
     message: () => 'Billing name is mandatory',

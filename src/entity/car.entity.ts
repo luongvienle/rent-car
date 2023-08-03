@@ -19,7 +19,7 @@ export class Car extends BaseEntity {
   capacityId: number;
 
   @Column()
-  rentPrice: number;
+  price: number;
 
   @Column()
   gasoline: number;
@@ -35,4 +35,9 @@ export class Car extends BaseEntity {
 
   @Column('simple-array')
   images: string[];
+
+  @Column({
+    nullable: true,
+  })
+  locked: boolean; //
 }

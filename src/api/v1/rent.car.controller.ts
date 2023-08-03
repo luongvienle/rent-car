@@ -23,7 +23,7 @@ import { RentCarService } from 'src/services/rent.car.service';
 import { JwtAuthGuard } from 'src/shared/JwtAuthGuard';
 import { RoleAmindGuard } from 'src/guard/role.guard';
 
-@Controller('rent-car')
+@Controller('car')
 @ApiTags('Rent Car')
 export class RentCarController {
   constructor(private readonly service: RentCarService) {}
@@ -69,10 +69,10 @@ export class RentCarController {
   @ApiOperation({
     summary: 'Car detail information',
   })
-  @ApiParam({ name: 'registerCode', required: true })
+  @ApiParam({ name: 'id', required: true })
   @ApiBearerAuth()
-  async carDetail(@Param('registerCode') registerCode): Promise<Car> {
-    return this.service.getCarDetail(registerCode);
+  async carDetail(@Param('id') id): Promise<Car> {
+    return this.service.getCarDetail(id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -89,7 +89,7 @@ export class RentCarController {
 
   @UseGuards(JwtAuthGuard)
   @UseGuards(TokenExistsGuard)
-  @Patch('rent-car')
+  @Patch('order')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Rent a car' })
   async rentCar(

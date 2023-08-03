@@ -30,10 +30,10 @@ export class RentCarRepository {
     return billings.docs.map((billing) => billing.data() as BillingInfo);
   }
 
-  async getCarByCode(registerCode: number): Promise<Car> {
+  async getCarByCode(id: number): Promise<Car> {
     const docRef = this.firebaseDb
       .collection(this.nameCollection)
-      .where('registerCode', '==', registerCode);
+      .where('id', '==', id);
     const car = await docRef.get();
     if (car.empty) {
       return null;
@@ -66,7 +66,7 @@ export class RentCarRepository {
   async getCarDetail(id: string): Promise<Car> {
     const docRef = this.firebaseDb
       .collection(this.nameCollection)
-      .where('registerCode', '==', id);
+      .where('id', '==', id);
     const car = await docRef.get();
     if (car.empty) {
       return null;

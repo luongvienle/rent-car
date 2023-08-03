@@ -40,6 +40,18 @@ export class RentCarService {
   }
 
   async rentCar(rentCarDto: RentCarDto, auth: string): Promise<String> {
+    const existenCar = await this.carRepository.findOne({
+      where: {
+        id: rentCarDto.id,
+      },
+    });
+    if (!existenCar) {
+      throw new BadRequestException('No car found');
+    }
+
+    if (!existenCar.available) {
+      throw new BadRequestException('This car was not available');
+    }
     const email = decodeAuth(auth);
     rentCarDto.email = email;
     const rentedCar = await this.carRepository.findOne({
@@ -50,19 +62,6 @@ export class RentCarService {
 
     if (rentedCar) {
       throw new BadRequestException('You rented another car');
-    }
-
-    const existenCar = await this.carRepository.findOne({
-      where: {
-        id: rentCarDto.registerCode,
-      },
-    });
-    if (!existenCar) {
-      throw new BadRequestException('No car found');
-    }
-
-    if (!existenCar.available) {
-      throw new BadRequestException('This car was not available');
     }
 
     existenCar.available = false;
@@ -153,13 +152,13 @@ export class RentCarService {
     }
   }
 
-  async getCarDetail(registerCode: number): Promise<Car> {
+  async getCarDetail(id: number): Promise<Car> {
     const car = await this.carRepository.findOne({
       where: {
-        id: registerCode,
+        id: id,
       },
     });
-    this.loggerSevice.debug(`car detail id: ${registerCode}`);
+    this.loggerSevice.debug(`car detail id: ${id}`);
     if (!car) {
       throw new BadRequestException('Car not found');
     } else {
@@ -170,6 +169,8 @@ export class RentCarService {
   async createCar(payload: CarDto): Promise<CarDto> {
     payload.createdDate = new Date();
     payload.updatedDate = new Date();
+    payload.available = true;
+    payload.images = [];
     // await this.repository.createCar(data);
 
     const queryRunner = this.dataSource.createQueryRunner();

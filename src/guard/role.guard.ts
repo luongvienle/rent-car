@@ -20,6 +20,13 @@ export class RoleAmindGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const token = request.headers['authorization'];
+    if (token == null || token == '') {
+      throw new CommonError(
+        ErrorMessage.UNAUTHORIZED,
+        HttpStatus.UNAUTHORIZED,
+        TitleCode.UNAUTHORIZED,
+      );
+    }
     const email = decodeAuth(token);
     const user = await this.userRepository.findOne({
       where: {
