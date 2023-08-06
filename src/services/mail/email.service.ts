@@ -44,12 +44,12 @@ export class EmailService {
     });
   }
 
-  async sendBillingEmail(to: string, body: RentCarDto): Promise<void> {
+  async sendBillingEmail(to: string, body: string): Promise<void> {
     await this.transporter.sendMail({
       from: 'vienll@tech.est-rouge.com',
       to: to,
       subject: 'Billing',
-      text: `Hi ${body.name}, this is your rent car billing information. Please take a look.
+      text: `Hi ${body}, You just rent a car. Please take a look.
       \n\n
       `,
     });

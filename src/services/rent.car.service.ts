@@ -4,11 +4,11 @@ import { CarDto } from 'src/dtos/car.dto';
 import { RentCarDto } from 'src/dtos/rent.car.dto';
 import { BillingInfo } from 'src/entity/billing.info.entity';
 import { Car, PaginationDto } from 'src/entity/car.entity';
-import { RentCarRepository } from 'src/repositories/rent.car.repository';
 import { decodeAuth } from 'src/utils/DecodeAuth';
 import { DataSource, Repository } from 'typeorm';
-import { EmailService } from './mail/email.service';
 import { Pagination } from '../utils/interfaces';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 @Injectable()
 export class RentCarService {
   constructor(
@@ -17,8 +17,9 @@ export class RentCarService {
 
     @InjectRepository(BillingInfo)
     private readonly billingRepository: Repository<BillingInfo>,
-    private readonly emailService: EmailService,
     private readonly loggerSevice: Logger,
+    @InjectQueue('sendmail')
+    private sentMail: Queue,
     private dataSource: DataSource,
   ) {}
 
@@ -55,7 +56,7 @@ export class RentCarService {
   async rentCar(rentCarDto: RentCarDto, auth: string): Promise<String> {
     const email = decodeAuth(auth);
     this.loggerSevice.debug(
-      `Rent car request from ${email} with info: ${rentCarDto}`,
+      `Rent car request from ${email} with info car id: ${rentCarDto.id}`,
     );
     const existenCar = await this.carRepository.findOne({
       where: {
@@ -92,13 +93,10 @@ export class RentCarService {
       // Save the rented car
       // await this.repository.rentOrGiveBackCar(existenCar);
       await this.carRepository.save(existenCar);
-      await this.emailService.sendBillingEmail(
-        email,
-        RentCarDto.plainToClass(rentCarDto),
-      );
-      this.loggerSevice.log(rentCarDto);
+      // this.loggerSevice.log(rentCarDto);
       await queryRunner.commitTransaction();
     } catch (err) {
+      console.log(err);
       // Rollback the transaction if an error occurs
       await queryRunner.rollbackTransaction();
       throw new Error(err.message);
@@ -106,6 +104,14 @@ export class RentCarService {
       // Release the query runner
       await queryRunner.release();
     }
+    await this.sentMail.add(
+      'order',
+      {
+        email: email,
+        name: rentCarDto.name,
+      },
+      { removeOnComplete: true },
+    );
     return 'Rent car successfully!';
   }
 

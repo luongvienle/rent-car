@@ -12,10 +12,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RandomService } from 'src/services/random/random.service';
 import { jwtConstants } from 'src/constants/jwt.constant';
 import { JwtToken } from 'src/entity/jwt.token.entity';
+import { BullModule } from '@nestjs/bull';
+import { EmailConsumer } from 'src/consumer/email.consumer';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, JwtToken]),
+    BullModule.registerQueue({
+      name: 'sendmail',
+    }),
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,

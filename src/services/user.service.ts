@@ -5,12 +5,14 @@ import { User } from 'src/entity/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { EmailService } from './mail/email.service';
+// import { EmailService } from './mail/email.service';
 import { RandomService } from './random/random.service';
 import { ConfirmDto } from 'src/dtos/confirm.dto';
 import { ConfigService } from '@nestjs/config';
 import { JwtToken } from 'src/entity/jwt.token.entity';
 import { TokenDto } from 'src/dtos/token.dto';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
 export class UserService {
@@ -22,7 +24,9 @@ export class UserService {
     private tokenRepository: Repository<JwtToken>,
     private readonly randomService: RandomService,
     private readonly jwtService: JwtService,
-    private readonly emailService: EmailService,
+    // private readonly emailService: EmailService,
+    @InjectQueue('sendmail')
+    private sentMail: Queue,
     private readonly configService: ConfigService,
     private readonly loggerService: Logger,
   ) {}
@@ -56,7 +60,15 @@ export class UserService {
       data.code = code;
       data.password = this.encrypt(data.password);
       await this.usersRepository.save(data);
-      this.emailService.sendWelcomeEmail(payload.email, payload.name, code);
+      await this.sentMail.add(
+        'user',
+        {
+          to: payload.email,
+          name: payload.name,
+          code: code,
+        },
+        { removeOnComplete: true },
+      );
     } catch (err) {
       throw new BadRequestException(err);
     }
