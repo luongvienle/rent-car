@@ -1,11 +1,15 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpStatus,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { UserDto } from 'src/dtos/user.dto';
 import * as cryptojs from 'crypto-js';
 import { User } from 'src/entity/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-// import { EmailService } from './mail/email.service';
 import { RandomService } from './random/random.service';
 import { ConfirmDto } from 'src/dtos/confirm.dto';
 import { ConfigService } from '@nestjs/config';
@@ -13,6 +17,7 @@ import { JwtToken } from 'src/entity/jwt.token.entity';
 import { TokenDto } from 'src/dtos/token.dto';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { CommonError, ErrorMessage } from 'src/common/common.error';
 
 @Injectable()
 export class UserService {
@@ -53,7 +58,7 @@ export class UserService {
     });
 
     if (existentUser) {
-      throw new BadRequestException('This email already have being used');
+      throw new CommonError(ErrorMessage.USER_EXIST, HttpStatus.BAD_REQUEST);
     }
     try {
       const code = this.randomService.generateRandomNumber();
@@ -83,7 +88,10 @@ export class UserService {
       },
     });
     if (!userInfo) {
-      throw new BadRequestException('User Not registered yet!');
+      throw new CommonError(
+        ErrorMessage.USER_NOT_CONFIRM,
+        HttpStatus.BAD_REQUEST,
+      );
     } else {
       if (userInfo.code === confirm.code) {
         userInfo.isConfirm = true;
@@ -102,7 +110,7 @@ export class UserService {
       },
     });
     if (!result) {
-      throw new BadRequestException('No user found!');
+      throw new CommonError(ErrorMessage.USER_WRONG, HttpStatus.BAD_REQUEST);
     }
     return result;
   }
@@ -127,8 +135,16 @@ export class UserService {
       if (user.isConfirm) {
         return result as User;
       } else {
-        throw new BadRequestException('Email was not confirmed yet!');
+        throw new CommonError(
+          ErrorMessage.USER_NOT_CONFIRM,
+          HttpStatus.BAD_REQUEST,
+        );
       }
+    } else {
+      throw new CommonError(
+        ErrorMessage.USER_WRONG_PASS,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     return null;

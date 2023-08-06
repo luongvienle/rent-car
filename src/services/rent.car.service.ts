@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpStatus,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CarDto } from 'src/dtos/car.dto';
 import { RentCarDto } from 'src/dtos/rent.car.dto';
@@ -9,6 +14,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Pagination } from '../utils/interfaces';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { CommonError, ErrorMessage } from 'src/common/common.error';
 @Injectable()
 export class RentCarService {
   constructor(
@@ -64,11 +70,14 @@ export class RentCarService {
       },
     });
     if (!existenCar) {
-      throw new BadRequestException('No car found');
+      throw new CommonError(ErrorMessage.CAR_NOT_FOUND, HttpStatus.BAD_REQUEST);
     }
 
     if (!existenCar.available) {
-      throw new BadRequestException('This car was not available');
+      throw new CommonError(
+        ErrorMessage.CAR_NOT_AVAILABLE,
+        HttpStatus.BAD_REQUEST,
+      );
     }
     rentCarDto.email = email;
     const rentedCar = await this.carRepository.findOne({
@@ -78,7 +87,7 @@ export class RentCarService {
     });
 
     if (rentedCar) {
-      throw new BadRequestException('You rented another car');
+      throw new CommonError(ErrorMessage.CAR_RENTED, HttpStatus.BAD_REQUEST);
     }
 
     existenCar.available = false;
@@ -123,9 +132,11 @@ export class RentCarService {
         rentBy: email,
       },
     });
-    // await this.repository.checkIfUserRented(email);
     if (!rentedCar) {
-      throw new BadRequestException('You dont have a car rented');
+      throw new CommonError(
+        ErrorMessage.CAR_RENTED_NOT_FOUND,
+        HttpStatus.BAD_REQUEST,
+      );
     }
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -155,7 +166,10 @@ export class RentCarService {
       },
     });
     if (!billing) {
-      throw new BadRequestException('Order not found');
+      throw new CommonError(
+        ErrorMessage.ORDER_NOT_FOUND,
+        HttpStatus.BAD_REQUEST,
+      );
     } else {
       return billing;
     }
@@ -170,7 +184,10 @@ export class RentCarService {
       },
     });
     if (!billing) {
-      throw new BadRequestException('Not rent yet!');
+      throw new CommonError(
+        ErrorMessage.ORDER_NOT_FOUND,
+        HttpStatus.BAD_REQUEST,
+      );
     } else {
       return billing;
     }
@@ -184,7 +201,7 @@ export class RentCarService {
     });
     this.loggerSevice.debug(`Get car detail with id: ${id}`);
     if (!car) {
-      throw new BadRequestException('Car not found');
+      throw new CommonError(ErrorMessage.CAR_NOT_FOUND, HttpStatus.BAD_REQUEST);
     } else {
       return car;
     }
