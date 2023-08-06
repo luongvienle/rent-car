@@ -38,6 +38,7 @@
     "dotenv": "^16.3.1",
     "firebase-admin": "^11.9.0",
     "jwt-decode": "^3.1.2",
+    "maskdata": "^1.2.2",
     "mysql2": "^3.5.1",
     "nodemailer": "^6.9.3",
     "passport": "^0.6.0",

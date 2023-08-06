@@ -17,8 +17,6 @@ export class RentCarService {
 
     @InjectRepository(BillingInfo)
     private readonly billingRepository: Repository<BillingInfo>,
-
-    private readonly repository: RentCarRepository,
     private readonly emailService: EmailService,
     private readonly loggerSevice: Logger,
     private dataSource: DataSource,
@@ -28,7 +26,9 @@ export class RentCarService {
     page,
     offset,
   }: PaginationDto): Promise<Pagination<CarDto[]>> {
-    this.loggerSevice.log(page + ' ');
+    this.loggerSevice.log(
+      `Get list car with page: ${page} and offset: ${offset}`,
+    );
     const [result, total] = await this.carRepository.findAndCount({
       take: offset,
       skip: offset * (page - 1),
@@ -53,6 +53,10 @@ export class RentCarService {
   }
 
   async rentCar(rentCarDto: RentCarDto, auth: string): Promise<String> {
+    const email = decodeAuth(auth);
+    this.loggerSevice.debug(
+      `Rent car request from ${email} with info: ${rentCarDto}`,
+    );
     const existenCar = await this.carRepository.findOne({
       where: {
         id: rentCarDto.id,
@@ -65,7 +69,6 @@ export class RentCarService {
     if (!existenCar.available) {
       throw new BadRequestException('This car was not available');
     }
-    const email = decodeAuth(auth);
     rentCarDto.email = email;
     const rentedCar = await this.carRepository.findOne({
       where: {
@@ -108,6 +111,7 @@ export class RentCarService {
 
   async giveBackCar(auth: string): Promise<String> {
     const email = decodeAuth(auth);
+    this.loggerSevice.debug(`Giveback the car by: ${email}`);
     const rentedCar = await this.carRepository.findOne({
       where: {
         rentBy: email,
@@ -138,12 +142,12 @@ export class RentCarService {
   }
 
   async getRentDetail(rentId: number): Promise<BillingInfo> {
+    this.loggerSevice.debug(`Admin get the rent detail by id: ${rentId}`);
     const billing = await this.billingRepository.findOne({
       where: {
         id: rentId,
       },
     });
-    this.loggerSevice.debug(`rent detail id: ${rentId}`);
     if (!billing) {
       throw new BadRequestException('Order not found');
     } else {
@@ -153,6 +157,7 @@ export class RentCarService {
 
   async getUserRentDetail(auth: string): Promise<BillingInfo[]> {
     const email = decodeAuth(auth);
+    this.loggerSevice.debug(`Get the rent detail by : ${email}`);
     const billing = await this.billingRepository.find({
       where: {
         email: email,
@@ -171,7 +176,7 @@ export class RentCarService {
         id: id,
       },
     });
-    this.loggerSevice.debug(`car detail id: ${id}`);
+    this.loggerSevice.debug(`Get car detail with id: ${id}`);
     if (!car) {
       throw new BadRequestException('Car not found');
     } else {
@@ -180,6 +185,7 @@ export class RentCarService {
   }
 
   async createCar(payload: CarDto): Promise<CarDto> {
+    this.loggerSevice.debug(`Admin create the car info: ${payload}`);
     payload.createdDate = new Date();
     payload.updatedDate = new Date();
     payload.available = true;

@@ -8,7 +8,6 @@ import { User } from 'src/entity/user.entity';
 import { RentCarRepository } from 'src/repositories/rent.car.repository';
 import { EmailService } from 'src/services/mail/email.service';
 import { RentCarService } from 'src/services/rent.car.service';
-import { UserService } from 'src/services/user.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Car, BillingInfo, JwtToken, User])],

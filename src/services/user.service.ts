@@ -26,8 +26,7 @@ export class UserService {
     private readonly configService: ConfigService,
     private readonly loggerService: Logger,
   ) {}
-  private readonly keyUtf8: string = 'huFpTr9yqaymFMz2ifB7';
-  private readonly ivUtf8: string = 'RAUqCbkM7ONT0V3R5nRJ';
+
   encrypt(value: string): string {
     return cryptojs.AES.encrypt(value, this.configService.get('KEY_UTF8'), {
       iv: this.configService.get('IV_UTF8'),
@@ -41,6 +40,7 @@ export class UserService {
   }
 
   async createUser(payload: UserDto): Promise<string> {
+    this.loggerService.log(`Create new user with info: ${payload}`);
     const data = payload;
     const existentUser = await this.usersRepository.findOne({
       where: {
@@ -64,6 +64,7 @@ export class UserService {
   }
 
   async confirmEmail(confirm: ConfirmDto): Promise<string> {
+    this.loggerService.log(`Confirm email with info: ${confirm}`);
     const userInfo = await this.usersRepository.findOne({
       where: {
         email: confirm.email,
@@ -97,6 +98,7 @@ export class UserService {
   async create(payload: UserDto): Promise<string> {
     try {
       await this.createUser(payload);
+      this.loggerService.log(`Create new user with info: ${payload}`);
       return 'User created successfully!';
     } catch (err) {
       throw new BadRequestException(err);
@@ -122,6 +124,7 @@ export class UserService {
 
   async login(payload: any): Promise<Object> {
     const data = { email: payload.email };
+    this.loggerService.log(`Login with email: ${payload.email}`);
     const access_token = this.jwtService.sign(data);
     this.saveToken(access_token);
     return {
@@ -137,7 +140,7 @@ export class UserService {
   }
 
   async logout(token: string): Promise<string> {
-    this.loggerService.log(token);
+    this.loggerService.log(`Logout with token: ${token}`);
     await this.tokenRepository.delete({
       token: token,
     });
