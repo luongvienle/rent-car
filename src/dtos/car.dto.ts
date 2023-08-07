@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { CarImage } from 'src/entity/car.image.entity';
 import { BaseDto } from './base.dto';
 
 export class CarDto extends BaseDto {
@@ -40,7 +41,7 @@ export class CarDto extends BaseDto {
   gasoline: number;
 
   @ApiProperty()
-  images: string[] | null;
+  images: CarImage[] | null;
 
   @IsString()
   @Expose()

@@ -1,6 +1,7 @@
 import { IsInt } from 'class-validator';
-import { Column, Entity, Index } from 'typeorm';
+import { Column, Entity, Index, OneToMany } from 'typeorm';
 import { BaseEntity } from './base.entity';
+import { CarImage } from './car.image.entity';
 
 export class PaginationDto {
   @IsInt()
@@ -42,8 +43,8 @@ export class Car extends BaseEntity {
   })
   rentBy: string;
 
-  @Column('simple-array')
-  images: string[];
+  @OneToMany(() => CarImage, (image) => image.id)
+  images: CarImage[];
 
   @Column({
     nullable: true,

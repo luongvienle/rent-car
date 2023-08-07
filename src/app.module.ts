@@ -4,20 +4,29 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ResponseInterceptor } from './interceptor/transform.interceptor';
-import { RentModule } from './modules/rent.car.module';
+import { CarModule } from './modules/car.module';
 import { UserModule } from './modules/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { RequestLoggingMiddleware } from './middleware/logger.middleware';
 import { MaskdataInterceptor } from './interceptor/maskdata.interceptor';
 import { MaskdataService } from './services/maskdata/maskdata.service';
+import { BullModule } from '@nestjs/bull';
+import { OrderModule } from './modules/order.module';
 
 @Module({
   imports: [
+    BullModule.forRoot({
+      redis: {
+        host: 'localhost',
+        port: 6379,
+      },
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
     UserModule,
-    RentModule,
+    CarModule,
+    OrderModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,

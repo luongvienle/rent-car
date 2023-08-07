@@ -1,10 +1,4 @@
-import {
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  Index,
-  Column,
-} from 'typeorm';
+import { PrimaryGeneratedColumn, Index, Column } from 'typeorm';
 
 export abstract class BaseEntity {
   @Index()
