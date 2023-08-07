@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import * as maskdata from 'maskdata';
 import { MaskdataService } from 'src/services/maskdata/maskdata.service';
 
 @Injectable()
@@ -23,7 +22,6 @@ export class MaskdataInterceptor implements NestInterceptor {
   }
 
   private maskData(data: any): any {
-    // let afterReplacing = maskdata.replaceValue(data, 'email', maskdata.maskEmail2(data));
     if (typeof data === 'string') {
       return this.maskDataService.mask(data);
     }

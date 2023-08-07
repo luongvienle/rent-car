@@ -7,8 +7,6 @@ export class CommonError extends HttpException {
 }
 
 export const ErrorTitle = {
-  INTERNAL_SERVER_ERROR: 'Internal server error.',
-  NOT_FOUND: 'Resource not found.',
   CAR_RENTED_NOT_FOUND: 'GIVEBACK ERROR',
   UNAUTHORIZED: 'ADMIN ACCESS ERROR',
   CAR_RENTED: 'RENTED ERROR',
@@ -23,8 +21,6 @@ export const ErrorTitle = {
 };
 
 export const ErrorCode = {
-  INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
-  NOT_FOUND: 'Resource not found.',
   CAR_RENTED_NOT_FOUND: 'CA-0001',
   UNAUTHORIZED: 'US-0001',
   CAR_RENTED: 'CA-0002',
@@ -39,9 +35,7 @@ export const ErrorCode = {
 };
 
 export const ErrorMessage = {
-  INTERNAL_SERVER_ERROR: 'INTERNAL SERVER ERROR',
   CAR_RENTED_NOT_FOUND: 'Car Not Found',
-  NOT_FOUND: 'NOT FOUND',
   UNAUTHORIZED: 'Admin only to access',
   CAR_RENTED: 'You rented another car',
   CAR_NOT_AVAILABLE: 'Car is not available to rent',

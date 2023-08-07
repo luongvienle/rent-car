@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
-import { RentCarDto } from 'src/dtos/rent.car.dto';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -11,21 +10,9 @@ export class EmailService {
     this.transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'vienll@tech.est-rouge.com',
+        user: this.configService.get('EMAIL_USER'),
         pass: this.configService.get('EMAIL_PASSWORD'),
-        // pass: this.configService.get<String>('EMAIL_PASSWORD'),
-        // pass: 'sasnvjywdihoxvik',
       },
-    });
-  }
-
-  async sendLogEmail(to: string, name: string): Promise<void> {
-    await this.transporter.sendMail({
-      from: 'vienll@tech.est-rouge.com',
-      to: to,
-      subject: 'Welcome',
-      text: `Hi ${name}, Thank for registering!
-      Please enter this code to confirm`,
     });
   }
 
@@ -35,7 +22,7 @@ export class EmailService {
     code: string,
   ): Promise<void> {
     await this.transporter.sendMail({
-      from: 'vienll@tech.est-rouge.com',
+      from: this.configService.get('EMAIL_USER'),
       to: to,
       subject: 'Welcome',
       text: `Hi ${name}, Thank for registering!
@@ -46,7 +33,7 @@ export class EmailService {
 
   async sendBillingEmail(to: string, body: string): Promise<void> {
     await this.transporter.sendMail({
-      from: 'vienll@tech.est-rouge.com',
+      from: this.configService.get('EMAIL_USER'),
       to: to,
       subject: 'Billing',
       text: `Hi ${body}, You just rent a car. Please take a look.

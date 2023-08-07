@@ -29,7 +29,6 @@ export class UserService {
     private tokenRepository: Repository<JwtToken>,
     private readonly randomService: RandomService,
     private readonly jwtService: JwtService,
-    // private readonly emailService: EmailService,
     @InjectQueue('sendmail')
     private sentMail: Queue,
     private readonly configService: ConfigService,

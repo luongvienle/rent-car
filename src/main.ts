@@ -9,7 +9,10 @@ import { CustomExceptionFilter } from './filter/exception.filter';
 async function bootstrap() {
   dotenv.config();
   const app = await NestFactory.create(AppModule, {});
-  app.setGlobalPrefix('api/v1');
+  const configService = app.get(ConfigService);
+  const port = configService.get('PORT');
+  const prefix = configService.get('API_PREFIX');
+  app.setGlobalPrefix(prefix);
 
   const config = new DocumentBuilder()
     .addBearerAuth()
@@ -30,8 +33,6 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new CustomExceptionFilter());
-  const configService = app.get(ConfigService);
-  const port = configService.get('PORT');
   await app.listen(port);
 }
 bootstrap();

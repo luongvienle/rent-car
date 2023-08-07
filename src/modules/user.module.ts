@@ -1,6 +1,5 @@
 import { Logger, Module } from '@nestjs/common';
 import { UserController } from 'src/api/v1/user.controller';
-import { UserRepository } from 'src/repositories/user.repository';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from 'src/shared/JwtStrategy';
@@ -13,7 +12,6 @@ import { RandomService } from 'src/services/random/random.service';
 import { jwtConstants } from 'src/constants/jwt.constant';
 import { JwtToken } from 'src/entity/jwt.token.entity';
 import { BullModule } from '@nestjs/bull';
-import { EmailConsumer } from 'src/consumer/email.consumer';
 
 @Module({
   imports: [
@@ -31,7 +29,6 @@ import { EmailConsumer } from 'src/consumer/email.consumer';
   ],
   controllers: [UserController],
   providers: [
-    UserRepository,
     UserService,
     LocalStrategy,
     JwtStrategy,

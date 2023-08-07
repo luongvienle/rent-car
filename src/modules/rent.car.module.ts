@@ -7,7 +7,6 @@ import { BillingInfo } from 'src/entity/billing.info.entity';
 import { Car } from 'src/entity/car.entity';
 import { JwtToken } from 'src/entity/jwt.token.entity';
 import { User } from 'src/entity/user.entity';
-import { RentCarRepository } from 'src/repositories/rent.car.repository';
 import { EmailService } from 'src/services/mail/email.service';
 import { RentCarService } from 'src/services/rent.car.service';
 
@@ -25,12 +24,6 @@ import { RentCarService } from 'src/services/rent.car.service';
     }),
   ],
   controllers: [RentCarController],
-  providers: [
-    RentCarRepository,
-    RentCarService,
-    EmailService,
-    Logger,
-    EmailConsumer,
-  ],
+  providers: [RentCarService, EmailService, Logger, EmailConsumer],
 })
 export class RentModule {}
