@@ -22,7 +22,6 @@ export class TokenExistsGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const token = request.headers['authorization'];
     if (token) {
-      this.logger.log(token + ' ');
       const tokenWithoutBearer = token.replace('Bearer ', '');
       const tokenExists = await this.tokenRepository.findOne({
         where: {

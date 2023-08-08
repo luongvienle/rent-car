@@ -64,7 +64,7 @@ export class CarController {
   @UseGuards(JwtAuthGuard)
   @UseGuards(TokenExistsGuard)
   @UseGuards(RoleAmindGuard)
-  @Post('register-new-car')
+  @Post('register')
   @ApiOperation({
     summary: 'Register a car',
   })

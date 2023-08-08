@@ -1,12 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
-import {
-  IsDate,
-  IsMobilePhone,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-} from 'class-validator';
+import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { BaseDto } from './base.dto';
 
 export class RentCarDto extends BaseDto {
@@ -16,7 +10,7 @@ export class RentCarDto extends BaseDto {
   @IsNumber()
   @ApiProperty()
   @Expose()
-  id: number;
+  carId: number;
 
   @IsNotEmpty({
     message: () => 'Billing name is mandatory',
@@ -26,14 +20,12 @@ export class RentCarDto extends BaseDto {
   @Expose()
   name: string;
 
-  @Expose()
   email: string;
 
   @IsNotEmpty({
     message: () => 'Phone number is mandatory',
   })
   @ApiProperty()
-  @Expose()
   phone: string;
 
   @IsNotEmpty({
@@ -94,7 +86,7 @@ export class RentCarDto extends BaseDto {
   @IsNumber()
   @ApiProperty()
   @Expose()
-  saleId: number | null;
+  discountId: number | null;
 
   @IsNotEmpty({
     message: () => 'Tax is mandatory',

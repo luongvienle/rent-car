@@ -1,7 +1,6 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CarDto } from 'src/dtos/car.dto';
-import { BillingInfo } from 'src/entity/billing.info.entity';
 import { Car, PaginationDto } from 'src/entity/car.entity';
 import { DataSource, Repository } from 'typeorm';
 import { Pagination } from '../utils/interfaces';
@@ -11,8 +10,6 @@ export class CarService {
   constructor(
     @InjectRepository(Car)
     private readonly carRepository: Repository<Car>,
-
-    @InjectRepository(BillingInfo)
     private readonly loggerSevice: Logger,
     private dataSource: DataSource,
   ) {}
@@ -22,7 +19,7 @@ export class CarService {
     offset,
   }: PaginationDto): Promise<Pagination<CarDto[]>> {
     this.loggerSevice.log(
-      `Get list car with page: ${page} and offset: ${offset}`,
+      'Get list car with page: ' + page + ' and offset: ' + offset,
     );
     const [result, total] = await this.carRepository.findAndCount({
       take: offset,
@@ -53,7 +50,7 @@ export class CarService {
         id: id,
       },
     });
-    this.loggerSevice.debug(`Get car detail with id: ${id}`);
+    this.loggerSevice.log('Get car detail with id: ' + id);
     if (!car) {
       throw new CommonError(ErrorMessage.CAR_NOT_FOUND, HttpStatus.BAD_REQUEST);
     } else {
@@ -62,7 +59,7 @@ export class CarService {
   }
 
   async createCar(payload: CarDto): Promise<CarDto> {
-    this.loggerSevice.debug(`Admin create the car info: ${payload}`);
+    this.loggerSevice.log('Admin create the car info: ' + payload);
     payload.createdDate = new Date();
     payload.updatedDate = new Date();
     payload.available = true;

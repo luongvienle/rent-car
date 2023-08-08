@@ -23,7 +23,7 @@ import { BullModule } from '@nestjs/bull';
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: {
-        expiresIn: '12000s',
+        expiresIn: '60000s',
       },
     }),
   ],

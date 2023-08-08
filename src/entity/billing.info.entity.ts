@@ -6,6 +6,9 @@ export class BillingInfo extends BaseEntity {
   @Column()
   name: string;
 
+  @Column()
+  carId: number;
+
   @Index()
   @Column()
   email: string;
@@ -35,7 +38,7 @@ export class BillingInfo extends BaseEntity {
   tax: number;
 
   @Column()
-  saleId: number | null;
+  discountId: number | null;
 
   @Column()
   pickUpDate: Date;

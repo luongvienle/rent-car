@@ -22,14 +22,12 @@ export class MaskdataInterceptor implements NestInterceptor {
   }
 
   private maskData(data: any): any {
-    if (typeof data === 'string') {
-      return this.maskDataService.mask(data);
-    }
-
     if (Array.isArray(data)) {
       for (let i = 0; i < data.length; i++) {
         data[i] = this.maskDataService.mask(data[i]);
       }
+    } else {
+      this.maskDataService.mask(JSON.stringify(data));
     }
 
     return data;

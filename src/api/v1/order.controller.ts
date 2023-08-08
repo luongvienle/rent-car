@@ -8,13 +8,19 @@ import {
   UseGuards,
   Param,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { RentCarDto } from 'src/dtos/rent.car.dto';
 import { TokenExistsGuard } from 'src/guard/token-exists.guard';
 import { BillingInfo } from 'src/entity/billing.info.entity';
 import { JwtAuthGuard } from 'src/shared/JwtAuthGuard';
 import { RoleAmindGuard } from 'src/guard/role.guard';
 import { OrderService } from 'src/services/order.service';
+import { CarDto } from 'src/dtos/car.dto';
 
 @Controller('order')
 @ApiTags('Order')
@@ -24,10 +30,11 @@ export class OrderController {
   @UseGuards(JwtAuthGuard)
   @UseGuards(TokenExistsGuard)
   @UseGuards(RoleAmindGuard)
-  @Get('order-detail/:id')
+  @Get('detail/:id')
   @ApiOperation({
     summary: 'Order car detail',
   })
+  @ApiParam({ name: 'id', required: true })
   @ApiBearerAuth()
   async rentDetail(@Param('id') id): Promise<BillingInfo> {
     return this.service.getOrderDetail(id);
@@ -35,7 +42,7 @@ export class OrderController {
 
   @UseGuards(JwtAuthGuard)
   @UseGuards(TokenExistsGuard)
-  @Get('order-detail/')
+  @Get('history/')
   @ApiOperation({
     summary: 'Order car detail',
   })
@@ -52,7 +59,7 @@ export class OrderController {
   async rentCar(
     @Body() payload: RentCarDto,
     @Headers() headers,
-  ): Promise<String> {
+  ): Promise<RentCarDto> {
     return this.service.orderCar(payload, headers.authorization);
   }
 

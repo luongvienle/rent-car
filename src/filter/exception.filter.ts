@@ -30,6 +30,9 @@ export class CustomExceptionFilter implements ExceptionFilter {
       if (message == ErrorMessage.UNAUTHORIZED) {
         title = ErrorTitle.UNAUTHORIZED;
         errorCode = ErrorCode.UNAUTHORIZED;
+      } else if (message == ErrorMessage.CAR_RENTED) {
+        title = ErrorTitle.CAR_RENTED;
+        errorCode = ErrorCode.CAR_RENTED;
       } else if (message == ErrorMessage.CAR_RENTED_NOT_FOUND) {
         title = ErrorTitle.CAR_RENTED_NOT_FOUND;
         errorCode = ErrorCode.CAR_RENTED_NOT_FOUND;
